@@ -1,0 +1,4 @@
+rootProject.name = 'duration-humanizer'
+include 'lib'
+findProject(':lib')?.name = 'duration-humanizer'
+
