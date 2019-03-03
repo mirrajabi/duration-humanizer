@@ -135,9 +135,9 @@ class DurationHumanizer {
     data class TimeUnit constructor(val key: String, val milliseconds: Long) {
         companion object {
             @JvmStatic
-            val YEAR = TimeUnit(KeyConstants.YEAR, 31557600000)
+            val YEAR = TimeUnit(KeyConstants.YEAR, 31536000000)
             @JvmStatic
-            val MONTH = TimeUnit(KeyConstants.MONTH, 2629800000)
+            val MONTH = TimeUnit(KeyConstants.MONTH, 2592000000)
             @JvmStatic
             val WEEK = TimeUnit(KeyConstants.WEEK, 604800000)
             @JvmStatic
@@ -145,7 +145,7 @@ class DurationHumanizer {
             @JvmStatic
             val HOUR = TimeUnit(KeyConstants.HOUR, 3600000)
             @JvmStatic
-            val MINUTE = TimeUnit(KeyConstants.MONTH, 60000)
+            val MINUTE = TimeUnit(KeyConstants.MINUTE, 60000)
             @JvmStatic
             val SECOND = TimeUnit(KeyConstants.SECOND, 1000)
             @JvmStatic
