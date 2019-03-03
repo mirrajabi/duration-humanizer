@@ -13,7 +13,7 @@ class EnglishDictionary : LanguageDictionary {
         KeyConstants.DECIMAL to "."
     )
 
-    override fun get(key: String, count: Float): String {
-        return words[key] + (if (count != 1f && key != KeyConstants.DECIMAL) "s" else "")
+    override fun get(key: String, count: Long): String {
+        return words[key] + (if (count != 1L && key != KeyConstants.DECIMAL) "s" else "")
     }
 }
