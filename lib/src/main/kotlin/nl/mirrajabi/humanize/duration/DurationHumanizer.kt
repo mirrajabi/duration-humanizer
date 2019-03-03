@@ -9,10 +9,10 @@ class DurationHumanizer {
 
     private val languages = mapOf("en" to EnglishDictionary())
     fun humanize(milliseconds: Long, options: Options = Options()): String {
-        var ms = Math.abs(milliseconds)
+        var ms = Math.abs(milliseconds).toDouble()
 
         val dictionary = getDictionary(options)
-        val pieces = mutableListOf<Pair<TimeUnit, Long>>()
+        val pieces = mutableListOf<Pair<TimeUnit, Double>>()
         val units = options.units.sortedByDescending { it.milliseconds }
         for (i in 0 until units.size) {
             val unit = units[i]
@@ -20,7 +20,7 @@ class DurationHumanizer {
             val unitCount = if (i + 1 == units.size) {
                 ms / unit.milliseconds
             } else {
-                floor(ms / unit.milliseconds.toDouble()).toLong()
+                floor(ms / unit.milliseconds.toDouble())
             }
 
             pieces.add(unit to unitCount)
@@ -32,8 +32,9 @@ class DurationHumanizer {
 
         if (options.round) {
             for (i in pieces.size - 1 downTo 0) {
+                val count = Math.round(pieces[i].second).toDouble()
+                pieces[i] = pieces[i].copy(second = count)
                 val piece = pieces[i]
-                val count = Math.round(piece.second.toDouble()).toFloat()
 
                 if (i == 0) {
                     break
@@ -41,10 +42,10 @@ class DurationHumanizer {
 
                 val previousPiece = pieces[i - 1].first
 
-                val ratioToLargerUnit = previousPiece.milliseconds / piece.first.milliseconds.toFloat()
-                if ((count % ratioToLargerUnit) == 0f || (options.largest != null && (options.largest.minus(1) < (i - firstOccupiedUnitIndex)))) {
-                    pieces[i - 1] = pieces[i - 1].first to (pieces[i - 1].second + count / ratioToLargerUnit).toLong()
-                    pieces[i] = piece.first to 0L
+                val ratioToLargerUnit = previousPiece.milliseconds / piece.first.milliseconds.toDouble()
+                if ((count % ratioToLargerUnit) == 0.0 || (options.largest != null && (options.largest.minus(1) < (i - firstOccupiedUnitIndex)))) {
+                    pieces[i - 1] = pieces[i - 1].first to (pieces[i - 1].second + count / ratioToLargerUnit)
+                    pieces[i] = piece.first to 0.0
                 }
             }
         }
@@ -75,11 +76,12 @@ class DurationHumanizer {
             }
         }
 
-        return render(0, units.last(), dictionary, options)
+        return render(0.0, units.last(), dictionary, options)
     }
 
-    private fun render(count: Long, type: TimeUnit, dictionary: LanguageDictionary, options: Options): String {
-        val decimal = if (options.decimal.isNullOrEmpty()) dictionary.get(KeyConstants.DECIMAL, 0L) else options.decimal
+    private fun render(count: Double, type: TimeUnit, dictionary: LanguageDictionary, options: Options): String {
+        val decimal =
+            if (options.decimal.isNullOrEmpty()) dictionary.get(KeyConstants.DECIMAL, 0.0) else options.decimal
         val countStr = count.toString().replace(".", decimal)
         val word = dictionary.get(type.key, count)
         return countStr + options.spacer + word
