@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
     println(humanizer.humanize(y + mo * 2))
 
     println()
-    val o1 = DurationHumanizer.Options(conjunction = "and ", serialComma = false, round = true)
+    val o1 = DurationHumanizer.Options(conjunction = " and ", serialComma = false, round = true)
     println(humanizer.humanize(m * 4 + s * 3 + ms * 2, o1))
     println(humanizer.humanize(h * 4 + m * 3 + s * 2, o1))
     println(humanizer.humanize(d * 4 + h * 3 + m * 2, o1))

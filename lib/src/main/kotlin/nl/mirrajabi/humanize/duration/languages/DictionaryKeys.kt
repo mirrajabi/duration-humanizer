@@ -1,6 +1,6 @@
 package nl.mirrajabi.humanize.duration.languages
 
-object KeyConstants {
+object DictionaryKeys {
     const val YEAR = "y"
     const val MONTH = "mo"
     const val WEEK = "w"

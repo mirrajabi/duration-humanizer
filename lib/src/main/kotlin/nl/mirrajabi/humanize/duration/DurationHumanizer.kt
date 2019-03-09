@@ -1,19 +1,44 @@
 package nl.mirrajabi.humanize.duration
 
+import nl.mirrajabi.humanize.duration.languages.DictionaryKeys
 import nl.mirrajabi.humanize.duration.languages.EnglishDictionary
-import nl.mirrajabi.humanize.duration.languages.KeyConstants
 import nl.mirrajabi.humanize.duration.languages.LanguageDictionary
 import java.lang.Math.floor
 
 class DurationHumanizer {
-
     private val languages = mapOf("en" to EnglishDictionary())
-    fun humanize(milliseconds: Long, options: Options = Options()): String {
-        var ms = Math.abs(milliseconds).toDouble()
 
+    fun humanize(milliseconds: Long, options: Options = Options()): String {
         val dictionary = getDictionary(options)
-        val pieces = mutableListOf<Pair<TimeUnit, Double>>()
         val units = options.units.sortedByDescending { it.milliseconds }
+        val pieces = getPieces(milliseconds, units)
+
+        if (options.round) {
+            round(pieces, options)
+        }
+
+        val result = calculateResult(units, pieces, options, dictionary)
+
+        if (result.isNotEmpty()) {
+            if (options.conjunction.isEmpty() || result.size == 1) {
+                return result.joinToString(separator = options.delimiter)
+            } else if (result.size == 2) {
+                return result.joinToString(separator = options.conjunction)
+            } else if (result.size > 2) {
+                val joinedPiecesExceptTheLastOne = result.subList(0, result.size - 1)
+                    .joinToString(separator = options.delimiter)
+                val lastPiece = result.lastOrNull().orEmpty()
+                val optionalComma = if (options.serialComma) "," else ""
+                return joinedPiecesExceptTheLastOne + optionalComma + options.conjunction + lastPiece
+            }
+        }
+
+        return render(0.0, units.last(), dictionary, options)
+    }
+
+    private fun getPieces(milliseconds: Long, units: List<TimeUnit>): MutableList<Pair<TimeUnit, Double>> {
+        var ms = Math.abs(milliseconds).toDouble()
+        val pieces = mutableListOf<Pair<TimeUnit, Double>>()
         for (i in 0 until units.size) {
             val unit = units[i]
 
@@ -27,29 +52,38 @@ class DurationHumanizer {
 
             ms -= unitCount * unit.milliseconds
         }
+        return pieces
+    }
 
+    private fun round(pieces: MutableList<Pair<TimeUnit, Double>>, options: Options) {
         val firstOccupiedUnitIndex = pieces.indexOfFirst { it.second > 0 }
+        for (i in pieces.size - 1 downTo 0) {
+            val count = Math.round(pieces[i].second).toDouble()
+            pieces[i] = pieces[i].copy(second = count)
+            val piece = pieces[i]
 
-        if (options.round) {
-            for (i in pieces.size - 1 downTo 0) {
-                val count = Math.round(pieces[i].second).toDouble()
-                pieces[i] = pieces[i].copy(second = count)
-                val piece = pieces[i]
+            if (i == 0) {
+                break
+            }
 
-                if (i == 0) {
-                    break
-                }
+            val previousPiece = pieces[i - 1].first
 
-                val previousPiece = pieces[i - 1].first
-
-                val ratioToLargerUnit = previousPiece.milliseconds / piece.first.milliseconds.toDouble()
-                if ((count % ratioToLargerUnit) == 0.0 || (options.largest != null && (options.largest.minus(1) < (i - firstOccupiedUnitIndex)))) {
-                    pieces[i - 1] = pieces[i - 1].first to (pieces[i - 1].second + count / ratioToLargerUnit)
-                    pieces[i] = piece.first to 0.0
-                }
+            val ratioToLargerUnit = previousPiece.milliseconds / piece.first.milliseconds.toDouble()
+            if ((count % ratioToLargerUnit) == 0.0 ||
+                (options.largest != null && (options.largest.minus(1) < (i - firstOccupiedUnitIndex)))
+            ) {
+                pieces[i - 1] = pieces[i - 1].first to (pieces[i - 1].second + count / ratioToLargerUnit)
+                pieces[i] = piece.first to 0.0
             }
         }
+    }
 
+    private fun calculateResult(
+        units: List<TimeUnit>,
+        pieces: MutableList<Pair<TimeUnit, Double>>,
+        options: Options,
+        dictionary: LanguageDictionary
+    ): List<String> {
         val result = mutableListOf<String>()
         for (i in 0 until units.size) {
             val piece = pieces[i]
@@ -61,29 +95,17 @@ class DurationHumanizer {
                 break
             }
         }
-
-        if (result.isNotEmpty()) {
-            if (options.conjunction.isEmpty() || result.size == 1) {
-                return result.joinToString(separator = options.delimiter)
-            } else if (result.size == 2) {
-                return result.joinToString(separator = options.conjunction)
-            } else if (result.size > 2) {
-                return result.subList(0, result.size - 1)
-                    .joinToString(separator = options.delimiter) +
-                        (if (options.serialComma) "," else " ") +
-                        options.conjunction +
-                        result.lastOrNull().orEmpty()
-            }
-        }
-
-        return render(0.0, units.last(), dictionary, options)
+        return result
     }
 
     private fun render(count: Double, type: TimeUnit, dictionary: LanguageDictionary, options: Options): String {
-        val decimal =
-            if (options.decimal.isNullOrEmpty()) dictionary.get(KeyConstants.DECIMAL, 0.0) else options.decimal
+        val decimal = if (options.decimal.isNullOrEmpty()) {
+            dictionary.provide(DictionaryKeys.DECIMAL, 0.0)
+        } else {
+            options.decimal
+        }
         val countStr = count.toString().replace(".", decimal)
-        val word = dictionary.get(type.key, count)
+        val word = dictionary.provide(type.key, count)
         return countStr + options.spacer + word
     }
 
@@ -137,21 +159,21 @@ class DurationHumanizer {
     data class TimeUnit constructor(val key: String, val milliseconds: Long) {
         companion object {
             @JvmStatic
-            val YEAR = TimeUnit(KeyConstants.YEAR, 31536000000)
+            val YEAR = TimeUnit(DictionaryKeys.YEAR, 31536000000)
             @JvmStatic
-            val MONTH = TimeUnit(KeyConstants.MONTH, 2592000000)
+            val MONTH = TimeUnit(DictionaryKeys.MONTH, 2592000000)
             @JvmStatic
-            val WEEK = TimeUnit(KeyConstants.WEEK, 604800000)
+            val WEEK = TimeUnit(DictionaryKeys.WEEK, 604800000)
             @JvmStatic
-            val DAY = TimeUnit(KeyConstants.DAY, 86400000)
+            val DAY = TimeUnit(DictionaryKeys.DAY, 86400000)
             @JvmStatic
-            val HOUR = TimeUnit(KeyConstants.HOUR, 3600000)
+            val HOUR = TimeUnit(DictionaryKeys.HOUR, 3600000)
             @JvmStatic
-            val MINUTE = TimeUnit(KeyConstants.MINUTE, 60000)
+            val MINUTE = TimeUnit(DictionaryKeys.MINUTE, 60000)
             @JvmStatic
-            val SECOND = TimeUnit(KeyConstants.SECOND, 1000)
+            val SECOND = TimeUnit(DictionaryKeys.SECOND, 1000)
             @JvmStatic
-            val MILLISECOND = TimeUnit(KeyConstants.MILLISECOND, 1)
+            val MILLISECOND = TimeUnit(DictionaryKeys.MILLISECOND, 1)
         }
     }
 }
