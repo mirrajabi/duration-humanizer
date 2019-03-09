@@ -55,4 +55,6 @@ fun main(args: Array<String>) {
     println(humanizer.humanize(3000))
     println(humanizer.humanize(2250))
     println(humanizer.humanize(97320000))
+
+    println(humanizer.humanize(12000))
 }

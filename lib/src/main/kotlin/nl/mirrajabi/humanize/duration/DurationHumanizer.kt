@@ -104,9 +104,11 @@ class DurationHumanizer {
         } else {
             options.decimal
         }
-        val countStr = count.toString().replace(".", decimal)
+        var stringCount = count.toString()
+        val hasDecimals = !("$stringCount ").contains(".0 ")
+        stringCount = if (hasDecimals) stringCount.replace(".", decimal) else stringCount.replace(".0", "")
         val word = dictionary.provide(type.key, count)
-        return countStr + options.spacer + word
+        return stringCount + options.spacer + word
     }
 
     private fun getDictionary(options: Options): LanguageDictionary {
