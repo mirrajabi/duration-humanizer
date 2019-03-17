@@ -8,6 +8,7 @@ import java.lang.Math.floor
 class DurationHumanizer {
     private val languages = mapOf("en" to EnglishDictionary())
 
+    @JvmOverloads
     fun humanize(milliseconds: Long, options: Options = Options()): String {
         val dictionary = getDictionary(options)
         val units = options.units.sortedByDescending { it.milliseconds }
@@ -69,9 +70,8 @@ class DurationHumanizer {
             val previousPiece = pieces[i - 1].first
 
             val ratioToLargerUnit = previousPiece.milliseconds / piece.first.milliseconds.toDouble()
-            if ((count % ratioToLargerUnit) == 0.0 ||
-                (options.largest != null && (options.largest.minus(1) < (i - firstOccupiedUnitIndex)))
-            ) {
+            val l = options.largest
+            if ((count % ratioToLargerUnit) == 0.0 || (l != null && (l.minus(1) < (i - firstOccupiedUnitIndex)))) {
                 pieces[i - 1] = pieces[i - 1].first to (pieces[i - 1].second + count / ratioToLargerUnit)
                 pieces[i] = piece.first to 0.0
             }
@@ -106,7 +106,11 @@ class DurationHumanizer {
         }
         var stringCount = count.toString()
         val hasDecimals = !("$stringCount ").contains(".0 ")
-        stringCount = if (hasDecimals) stringCount.replace(".", decimal) else stringCount.replace(".0", "")
+        stringCount = if (hasDecimals) {
+            stringCount.replace(".", decimal.orEmpty())
+        } else {
+            stringCount.replace(".0", "")
+        }
         val word = dictionary.provide(type.key, count)
         return stringCount + options.spacer + word
     }
@@ -115,9 +119,10 @@ class DurationHumanizer {
         val languagesFromOptions = mutableListOf<String>()
         languagesFromOptions.add(options.language)
 
-        if (options.fallbacks != null) {
-            if (options.fallbacks.isNotEmpty()) {
-                languagesFromOptions.addAll(options.fallbacks)
+        val fallbacks = options.fallbacks
+        if (fallbacks != null) {
+            if (fallbacks.isNotEmpty()) {
+                languagesFromOptions.addAll(fallbacks)
             } else {
                 throw IllegalArgumentException("fallbacks must be an array with at least one element")
             }
@@ -125,8 +130,9 @@ class DurationHumanizer {
 
         for (i in 0 until languagesFromOptions.size) {
             val languageToTry = languagesFromOptions[i]
-            if (options.languages?.getOrDefault(languageToTry, null) != null) {
-                return options.languages.getValue(languageToTry)
+            val optionLanguages = options.languages
+            if (optionLanguages?.getOrDefault(languageToTry, null) != null) {
+                return optionLanguages.getValue(languageToTry)
             } else if (languages.getOrDefault(languageToTry, null) != null) {
                 return languages.getValue(languageToTry)
             }
@@ -135,18 +141,18 @@ class DurationHumanizer {
         throw IllegalStateException("No language found")
     }
 
-    data class Options(
-        val language: String = "en",
-        val delimiter: String = ", ",
-        val spacer: String = " ",
-        val conjunction: String = "",
-        val serialComma: Boolean = true,
-        val round: Boolean = false,
-        val largest: Long? = null,
-        val decimal: String? = null,
-        val languages: Map<String, LanguageDictionary>? = null,
-        val fallbacks: List<String>? = null,
-        val units: List<TimeUnit> = listOf(
+    data class Options @JvmOverloads constructor(
+        var language: String = "en",
+        var delimiter: String = ", ",
+        var spacer: String = " ",
+        var conjunction: String = "",
+        var serialComma: Boolean = true,
+        var round: Boolean = false,
+        var largest: Long? = null,
+        var decimal: String? = null,
+        var languages: Map<String, LanguageDictionary>? = null,
+        var fallbacks: List<String>? = null,
+        var units: List<TimeUnit> = listOf(
             TimeUnit.YEAR,
             TimeUnit.MONTH,
             TimeUnit.WEEK,
