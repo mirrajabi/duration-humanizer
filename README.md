@@ -1,5 +1,6 @@
 Duration Humanizer
 =================
+[![](https://jitpack.io/v/mirrajabi/duration-humanizer.svg)](https://jitpack.io/#mirrajabi/duration-humanizer)
 
 Port of [HumanizeDuration.js](https://github.com/EvanHahn/HumanizeDuration.js).  
 I have the time in milliseconds and I want it to become "30 minutes" or "3 days, 1 hour". Enter Duration Humanizer!
