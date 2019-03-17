@@ -2,7 +2,7 @@ Duration Humanizer
 =================
 
 Port of [HumanizeDuration.js](https://github.com/EvanHahn/HumanizeDuration.js).  
-I have the time in milliseconds and I want it to become "30 minutes" or "3 days, 1 hour". Enter Humanize Duration!
+I have the time in milliseconds and I want it to become "30 minutes" or "3 days, 1 hour". Enter Duration Humanizer!
 
 Adding to your project
 -----------
