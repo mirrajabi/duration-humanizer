@@ -20,7 +20,7 @@ allprojects {
 2. Add the dependency
 ```
 dependencies {
-	implementation 'com.github.mirrajabi:duration-humanizer:1.0'
+	implementation 'com.github.mirrajabi:duration-humanizer:1.0.0'
 }
 ```
 
