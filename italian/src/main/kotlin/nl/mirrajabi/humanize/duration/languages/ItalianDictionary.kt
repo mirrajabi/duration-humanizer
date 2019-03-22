@@ -4,17 +4,6 @@ package nl.mirrajabi.humanize.duration.languages
  * Italian implementation of [LanguageDictionary].
  */
 class ItalianDictionary : LanguageDictionary {
-    private val words = mapOf(
-        DictionaryKeys.YEAR to "anno",
-        DictionaryKeys.MONTH to "month",
-        DictionaryKeys.WEEK to "week",
-        DictionaryKeys.DAY to "day",
-        DictionaryKeys.HOUR to "hour",
-        DictionaryKeys.MINUTE to "minute",
-        DictionaryKeys.SECOND to "second",
-        DictionaryKeys.MILLISECOND to "millisecond",
-        DictionaryKeys.DECIMAL to "."
-    )
 
     override fun provide(key: String, count: Double): String {
         val isPlural = count != 1.0
