@@ -2,3 +2,5 @@ rootProject.name = 'duration-humanizer'
 include 'lib'
 findProject(':lib')?.name = 'duration-humanizer'
 
+include 'italian'
+findProject(':italian')?.name = 'duration-humanizer-it'

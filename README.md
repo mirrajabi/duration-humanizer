@@ -145,5 +145,10 @@ println(humanizer.humanize(22141000, options)) // 6 hours, 9 minutes and 1 secon
 Supported languages
 -------------------
 
-Duration Humanizer by default has only English support but soon I'll try to add other languages.
+Duration Humanizer by default has only English support.  
+If you want add more languages, you can include the following dependencies.
 
+**Note**. Replace `latest_version` with the latest humanizer version published: [![](https://jitpack.io/v/mirrajabi/duration-humanizer.svg)](https://jitpack.io/#mirrajabi/duration-humanizer)  
+
+* Italian  
+  `implementation com.github.mirrajabi:duration-humanizer-it:latest_version`
