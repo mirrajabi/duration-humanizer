@@ -24,7 +24,7 @@ dependencies {
 	implementation "com.github.mirrajabi:duration-humanizer:$latest_version"
 }
 ```
-**Note**. Replace `latest_version` with the latest humanizer version published: [![]
+**Note**. Replace `latest_version` with the latest humanizer version published: [![](https://jitpack.io/v/mirrajabi/duration-humanizer.svg)](https://jitpack.io/#mirrajabi/duration-humanizer)  
 
 Basic usage
 -----------
