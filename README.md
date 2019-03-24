@@ -149,7 +149,7 @@ Supported languages
 Duration Humanizer by default has only English support.  
 If you want add more languages, you can include the following dependencies.
 
-**Note**. Replace `latest_version` with the latest humanizer version published: [![](https://jitpack.io/v/mirrajabi/duration-humanizer.svg)](https://jitpack.io/#mirrajabi/duration-humanizer)  
+**Note**. Replace `$latest_version` with the latest humanizer version published: [![](https://jitpack.io/v/mirrajabi/duration-humanizer.svg)](https://jitpack.io/#mirrajabi/duration-humanizer)  
 
 * Italian  
-  `implementation com.github.mirrajabi:duration-humanizer-it:latest_version`
+  `implementation "com.github.mirrajabi:duration-humanizer-it:$latest_version"`
