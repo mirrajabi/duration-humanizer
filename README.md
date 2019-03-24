@@ -21,9 +21,10 @@ allprojects {
 2. Add the dependency
 ```
 dependencies {
-	implementation 'com.github.mirrajabi:duration-humanizer:1.0.0'
+	implementation "com.github.mirrajabi:duration-humanizer:$latest_version"
 }
 ```
+**Note**. Replace `latest_version` with the latest humanizer version published: [![]
 
 Basic usage
 -----------
