@@ -1,8 +1,7 @@
 Duration Humanizer
 =================
 [![](https://jitpack.io/v/mirrajabi/duration-humanizer.svg)](https://jitpack.io/#mirrajabi/duration-humanizer)
-
-Port of [HumanizeDuration.js](https://github.com/EvanHahn/HumanizeDuration.js).  
+ 
 I have the time in milliseconds and I want it to become "30 minutes" or "3 days, 1 hour". Enter Duration Humanizer!
 
 Adding to your project
@@ -153,3 +152,10 @@ If you want add more languages, you can include the following dependencies.
 
 * Italian  
   `implementation "com.github.mirrajabi:duration-humanizer-it:$latest_version"`
+  
+
+Credits:
+---------
+
+- [Evan Hahn](https://github.com/EvanHahn) for [HumanizeDuration.js](https://github.com/EvanHahn/HumanizeDuration.js). 
+- [Riccardo Montagnin](https://github.com/RiccardoM) for Italian support
