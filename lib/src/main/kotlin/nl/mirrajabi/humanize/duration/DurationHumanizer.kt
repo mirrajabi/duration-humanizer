@@ -131,9 +131,9 @@ class DurationHumanizer {
         for (i in 0 until languagesFromOptions.size) {
             val languageToTry = languagesFromOptions[i]
             val optionLanguages = options.languages
-            if (optionLanguages?.getOrDefault(languageToTry, null) != null) {
+            if (optionLanguages?.get(languageToTry) != null) {
                 return optionLanguages.getValue(languageToTry)
-            } else if (languages.getOrDefault(languageToTry, null) != null) {
+            } else if (languages[languageToTry] != null) {
                 return languages.getValue(languageToTry)
             }
         }
